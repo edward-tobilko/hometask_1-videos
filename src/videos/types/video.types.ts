@@ -1,3 +1,4 @@
+// * Роздільні значення з документації
 export enum VideoAvailableResolution {
   P144 = 'P144',
   P240 = 'P240',
@@ -9,6 +10,7 @@ export enum VideoAvailableResolution {
   P2160 = 'P2160',
 }
 
+// * Те, що ми повертаємо при успіху (Response 201 -> Example Value):
 export type Video = {
   id: number;
   title: string;
