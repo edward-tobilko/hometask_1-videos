@@ -3,12 +3,27 @@ import request from 'supertest';
 
 import { setupApp } from '../../app';
 import { videoInputDto } from '../../videos/dto/video.input-dto';
+import {
+  Video,
+  VideoAvailableResolution,
+} from '../../videos/types/video.types';
+
+const BASE_URL = '/hometask_01/api';
+
+const newTestCreateVideo: Video = {
+  id: expect.any(Number),
+  title: 'string',
+  author: 'string',
+  canBeDownloaded: true,
+  minAgeRestriction: null,
+  createdAt: expect.any(String),
+  publicationDate: expect.any(String),
+  availableResolutions: [],
+};
 
 describe('Videos API', () => {
   const app = express();
   setupApp(app);
-
-  const BASE_URL = '/hometask_01/api';
 
   beforeAll(async () => {
     await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
@@ -28,6 +43,36 @@ describe('Videos API', () => {
 
     expect(Array.isArray(videoListResponse.body)).toBe(true);
     expect(videoListResponse.body.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('POST: /videos -> should create new driver, (status - 201)', async () => {
+    await request(app)
+      .post(`${BASE_URL}/videos`)
+      .send({
+        ...newTestCreateVideo,
+        title: 'New test video-1',
+        author: 'New test author-1',
+        availableResolutions: [
+          VideoAvailableResolution.P480,
+          VideoAvailableResolution.P360,
+        ],
+      })
+      .expect(201);
+  });
+
+  it('POST: /videos -> should not create if the inputModel has incorrect values, (status - 400)', async () => {
+    await request(app)
+      .post(`${BASE_URL}/videos`)
+      .send({
+        ...newTestCreateVideo,
+        title: 'New test video-1',
+        author: 'New test author-1',
+        availableResolutions: [
+          VideoAvailableResolution.P480,
+          VideoAvailableResolution.P360,
+        ],
+      })
+      .expect(201);
   });
 
   // * якщо Jest «висить» після тестів:
