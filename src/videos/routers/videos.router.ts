@@ -45,7 +45,7 @@ videosRouter
 
       // * СТВОРЕННЯ МОДЕЛІ ПІД 201
       const videoId = db.videos.length
-        ? db.videos[db.videos.length - 1].id + 1
+        ? db.videos[db.videos.length - 1].id! + 1
         : 1;
       const createDate = new Date();
       const publicationDate = new Date(createDate);
