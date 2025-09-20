@@ -1,13 +1,8 @@
-import { createErrorMessages } from './../../utils/createErrorMessages';
 import express from 'express';
 import request from 'supertest';
 
 import { setupApp } from '../../app';
-import { videoInputDto } from '../../videos/dto/video.input-dto';
-import {
-  Video,
-  VideoAvailableResolution,
-} from '../../videos/types/video.types';
+import { Video } from '../../videos/types/video.types';
 
 const BASE_URL = '/hometask_01/api';
 
