@@ -87,7 +87,7 @@ export const updateVideoInputDtoValidation = (
   }
 
   if (typeof data.canBeDownloaded !== 'boolean') {
-    errors.push({ field: 'boolean', message: 'must be boolean' });
+    errors.push({ field: 'canBeDownloaded', message: 'Must be boolean' });
   }
 
   if (
@@ -96,7 +96,7 @@ export const updateVideoInputDtoValidation = (
   ) {
     errors.push({
       field: 'publicationDate',
-      message: 'must be a valid ISO date-time string',
+      message: 'Must be a valid ISO date-time string',
     });
   }
 
@@ -109,7 +109,7 @@ export const updateVideoInputDtoValidation = (
     ) {
       errors.push({
         field: 'minAgeRestriction',
-        message: 'must be integer from 1 to 18 or null',
+        message: 'Must be integer from 1 to 18 or null',
       });
     }
   }
