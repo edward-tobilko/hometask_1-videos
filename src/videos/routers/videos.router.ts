@@ -2,10 +2,16 @@ import { Request, Response, Router } from 'express';
 
 import { db } from '../../db/videos.db';
 import { Video } from '../types/video.types';
-import { VideoInputDto } from '../types/video-input-dto.types';
+import {
+  UpdateVideoInputDto,
+  CreateVideoInputDto,
+} from '../types/video-input-dto.types';
 import { ErrorResponse } from '../types/video-errorResponse.types';
 import { createErrorMessages } from '../../utils/createErrorMessages';
-import { videoInputDtoValidation } from '../validation/video-input-dto-validation';
+import {
+  createVideoInputDtoValidation,
+  updateVideoInputDtoValidation,
+} from '../validation/video-input-dto-validation';
 import { log } from 'node:console';
 import { videoAssertResponseMinAge } from '../../utils/assertResponseMinAge';
 
@@ -18,12 +24,12 @@ videosRouter
 
   .post(
     '',
-    async (
-      req: Request<{}, {}, VideoInputDto, {}>,
+    (
+      req: Request<{}, {}, CreateVideoInputDto, {}>,
       res: Response<Video | ErrorResponse>,
     ) => {
       // * ВАЛІДАЦІЯ (звідси берем request body — це req.body)
-      const errors = videoInputDtoValidation(req.body);
+      const errors = createVideoInputDtoValidation(req.body);
 
       if (errors.length > 0) {
         for (let i = 0; i < errors.length; i++) {
@@ -67,4 +73,104 @@ videosRouter
       // * ВІДПОВІДЬ (response) за схемою 201
       return res.status(201).json(newVideoResponse);
     },
-  );
+  )
+
+  .get('/:id', (req: Request, res: Response) => {
+    const currentId = parseInt(req.params.id);
+
+    const currentVideo = db.videos.find((video) => video.id === currentId);
+
+    if (!currentVideo) {
+      return res
+        .status(404)
+        .json(
+          createErrorMessages([{ field: 'video', message: 'Video not found' }]),
+        );
+    }
+
+    log('currentVideo ->', currentVideo);
+
+    res.status(200).json(currentVideo);
+  })
+
+  .put(
+    '/:id',
+    (req: Request<{ id: string }, {}, UpdateVideoInputDto>, res: Response) => {
+      const updatedId = parseInt(req.params.id);
+
+      // * робимо валідацію та відловлюємо помилки в полях, які відправить клієнт
+      const errors = updateVideoInputDtoValidation(req.body);
+
+      if (errors.length > 0) {
+        return res.status(400).json(createErrorMessages(errors));
+      }
+
+      let updatedVideoIndex = -1;
+
+      for (let index = 0; index < db.videos.length; index++) {
+        const video = db.videos[index];
+
+        if (video.id === updatedId) {
+          updatedVideoIndex = index;
+          break;
+        }
+      }
+
+      if (updatedVideoIndex === -1) {
+        return res
+          .status(404)
+          .json(
+            createErrorMessages([{ field: 'id', message: 'Video not found' }]),
+          );
+      }
+
+      // * отримуємо відео, яке хочемо відновити
+      const video = db.videos[updatedVideoIndex];
+
+      // * отримуємо поля, які надішле нам клієнт
+      const {
+        title,
+        author,
+        publicationDate,
+        availableResolutions = [],
+        canBeDownloaded,
+        minAgeRestriction,
+      } = req.body;
+
+      // * нормалізуємо publicationDate з тіла запиту
+      const normalizePublicationDate = new Date(
+        typeof publicationDate === 'string'
+          ? publicationDate
+          : String(publicationDate),
+      );
+
+      video.title = title.trim();
+      video.author = author.trim();
+      video.canBeDownloaded = canBeDownloaded;
+      video.minAgeRestriction = minAgeRestriction;
+      video.publicationDate = normalizePublicationDate.toISOString();
+      video.availableResolutions = availableResolutions;
+
+      res.sendStatus(204);
+    },
+  )
+
+  .delete('/:id', (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+
+    const deletedVideoIndex = db.videos.findIndex((video) => video.id === id);
+
+    log('deletedVideoIndex ->', deletedVideoIndex);
+
+    if (deletedVideoIndex === -1) {
+      return res
+        .status(404)
+        .json(
+          createErrorMessages([{ field: 'id', message: 'Video not found' }]),
+        );
+    }
+
+    db.videos.splice(deletedVideoIndex, 1);
+
+    res.sendStatus(204);
+  });
