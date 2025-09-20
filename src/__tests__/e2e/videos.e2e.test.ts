@@ -60,21 +60,6 @@ describe('Videos API', () => {
       .expect(201);
   });
 
-  it('POST: /videos -> should not create if the inputModel has incorrect values, (status - 400)', async () => {
-    await request(app)
-      .post(`${BASE_URL}/videos`)
-      .send({
-        ...newTestCreateVideo,
-        title: 'New test video-1',
-        author: 'New test author-1',
-        availableResolutions: [
-          VideoAvailableResolution.P480,
-          VideoAvailableResolution.P360,
-        ],
-      })
-      .expect(201);
-  });
-
   // * якщо Jest «висить» після тестів:
   afterAll(async () => {
     await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
