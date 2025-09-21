@@ -34,6 +34,7 @@ export const createVideoInputDtoValidation = (
 
   if (
     !Array.isArray(data.availableResolutions) ||
+    data.availableResolutions.length < 1 ||
     !data.availableResolutions.every((currentValue) =>
       Object.values(VideoAvailableResolution).includes(currentValue),
     )
@@ -76,6 +77,7 @@ export const updateVideoInputDtoValidation = (
 
   if (
     !Array.isArray(data.availableResolutions) ||
+    data.availableResolutions.length < 1 ||
     !data.availableResolutions.every((currentValue) =>
       Object.values(VideoAvailableResolution).includes(currentValue),
     )
