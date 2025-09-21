@@ -1,5 +1,3 @@
-// ? dto (Data Transfer Object) - то, что присылает клиент в body (request)
-
 import { CreateVideoInputDto } from '../types/video-input-dto.types';
 import { VideoAvailableResolution } from '../types/video.types';
 
@@ -9,3 +7,5 @@ export const videoInputDto: CreateVideoInputDto = {
   author: 'Another author-1',
   availableResolutions: [VideoAvailableResolution.P144],
 };
+
+// ? dto (Data Transfer Object) - то, что присылает клиент в body (request)
