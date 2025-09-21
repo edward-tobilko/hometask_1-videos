@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+import { log } from 'node:console';
 
 import { db } from '../../db/videos.db';
 import { Video } from '../types/video.types';
@@ -12,7 +13,6 @@ import {
   createVideoInputDtoValidation,
   updateVideoInputDtoValidation,
 } from '../validation/video-input-dto-validation';
-import { log } from 'node:console';
 import { videoAssertResponseMinAge } from '../../utils/assertResponseMinAge';
 
 export const videosRouter = Router({});
