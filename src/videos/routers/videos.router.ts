@@ -48,7 +48,9 @@ videosRouter
         ? db.videos[db.videos.length - 1].id! + 1
         : 1;
       const createDate = new Date();
-      const publicationDate = new Date(createDate);
+      const publicationDate = new Date(
+        createDate.getTime() + 24 * 60 * 60 * 1000,
+      );
 
       const newVideoResponse: Video = {
         id: videoId,
