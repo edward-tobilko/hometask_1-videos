@@ -7,8 +7,6 @@ import {
   VideoAvailableResolution,
 } from '../../videos/types/video.types';
 
-const BASE_URL = '/hometask_01/api';
-
 const newTestUpdateVideo: Video = {
   id: expect.any(Number),
   title: 'New test video-1',
@@ -25,7 +23,7 @@ describe('Update video API body validation check', () => {
   setupApp(app);
 
   beforeAll(async () => {
-    await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
+    await request(app).delete(`/testing/all-data`).expect(204);
   });
 
   it.each([
@@ -43,7 +41,7 @@ describe('Update video API body validation check', () => {
     'should not update video if the inputModel has incorrect values (status - 400)',
     async (_name, patch) => {
       const createResponse = await request(app)
-        .post(`${BASE_URL}/videos`)
+        .post(`/videos`)
         .send({
           ...newTestUpdateVideo,
           title: 'test title',
@@ -53,7 +51,7 @@ describe('Update video API body validation check', () => {
         .expect(201);
 
       await request(app)
-        .put(`${BASE_URL}/videos/${createResponse.body.id}`)
+        .put(`/videos/${createResponse.body.id}`)
         .send({
           ...newTestUpdateVideo,
           ...patch,
@@ -64,7 +62,7 @@ describe('Update video API body validation check', () => {
 
   it('should not update video if it NOT FOUND (status - 404)', async () => {
     await request(app)
-      .put(`${BASE_URL}/video/999999`)
+      .put(`/videos/999999`)
       .send({
         ...newTestUpdateVideo,
         title: 'string',
@@ -79,7 +77,7 @@ describe('Update video API body validation check', () => {
 
   // * якщо Jest «висить» після тестів:
   afterAll(async () => {
-    await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
+    await request(app).delete(`/testing/all-data`).expect(204);
   });
 });
 

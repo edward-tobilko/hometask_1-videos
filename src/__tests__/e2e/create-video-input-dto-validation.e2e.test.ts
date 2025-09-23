@@ -4,8 +4,6 @@ import request from 'supertest';
 import { setupApp } from '../../app';
 import { Video } from '../../videos/types/video.types';
 
-const BASE_URL = '/hometask_01/api';
-
 const newTestCreateVideo: Video = {
   id: expect.any(Number),
   title: 'New test video-1',
@@ -22,12 +20,12 @@ describe('Create video API body validation check', () => {
   setupApp(app);
 
   beforeAll(async () => {
-    await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
+    await request(app).delete(`/testing/all-data`).expect(204);
   });
 
   it('should not create video if the inputModel has incorrect values (status - 400)', async () => {
     const invalidDataSet1 = await request(app)
-      .post(`${BASE_URL}/videos`)
+      .post(`/videos`)
       .send({
         ...newTestCreateVideo,
         title: 'maxLength'.repeat(41),
@@ -41,6 +39,6 @@ describe('Create video API body validation check', () => {
 
   // * якщо Jest «висить» після тестів:
   afterAll(async () => {
-    await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
+    await request(app).delete(`/testing/all-data`).expect(204);
   });
 });

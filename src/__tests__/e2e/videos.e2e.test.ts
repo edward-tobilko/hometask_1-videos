@@ -9,9 +9,6 @@ import {
 } from '../../videos/types/video.types';
 import { UpdateVideoInputDto } from '../../videos/types/video-input-dto.types';
 
-// * Base url
-const BASE_URL = '/hometask_01/api';
-
 // * Data
 const newTestCreateVideo: Video = {
   id: expect.any(Number),
@@ -29,13 +26,13 @@ describe('Videos API', () => {
   setupApp(app);
 
   beforeAll(async () => {
-    await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
+    await request(app).delete(`/testing/all-data`).expect(204);
   });
 
   // * Helper func
   const createResponse = async () => {
     const response = await request(app)
-      .post(`${BASE_URL}/videos`)
+      .post(`/videos`)
       .send({ ...newTestCreateVideo, title: 'New another video' })
       .expect(201);
 
@@ -47,13 +44,11 @@ describe('Videos API', () => {
     const video1 = { ...newTestCreateVideo, title: 'Another video-1' };
     const video2 = { ...video1, title: 'Another video-2' };
 
-    await request(app).post(`${BASE_URL}/videos`).send(video1).expect(201);
+    await request(app).post(`/videos`).send(video1).expect(201);
 
-    await request(app).post(`${BASE_URL}/videos`).send(video2).expect(201);
+    await request(app).post(`/videos`).send(video2).expect(201);
 
-    const videoListResponse = await request(app)
-      .get(`${BASE_URL}/videos`)
-      .expect(200);
+    const videoListResponse = await request(app).get(`/videos`).expect(200);
 
     expect(Array.isArray(videoListResponse.body)).toBe(true);
     expect(videoListResponse.body.length).toBeGreaterThanOrEqual(2);
@@ -61,7 +56,7 @@ describe('Videos API', () => {
 
   it('POST: /videos -> should create new driver (status - 201)', async () => {
     await request(app)
-      .post(`${BASE_URL}/videos`)
+      .post(`/videos`)
       .send({
         ...newTestCreateVideo,
         title: 'New test video-1',
@@ -80,16 +75,16 @@ describe('Videos API', () => {
     const currentId = getCreatedResponse.id;
 
     const getResponse = await request(app)
-      .get(`${BASE_URL}/videos/${currentId}`)
+      .get(`/videos/${currentId}`)
       .expect(200);
 
     expect(getResponse.body).toEqual(getCreatedResponse);
   });
 
   it('GET: /videos/:id -> should NOT return video by id (If video for passed id does not exist) (status - 404)', async () => {
-    await request(app).get(`${BASE_URL}/99999`).expect(404);
+    await request(app).get(`/99999`).expect(404);
 
-    await request(app).get(`${BASE_URL}/abc`).expect(404);
+    await request(app).get(`/abc`).expect(404);
   });
 
   it('PUT: /videos/:id -> should update video by id (status - 204)', async () => {
@@ -112,14 +107,14 @@ describe('Videos API', () => {
     };
 
     const responseResult = await request(app)
-      .put(`${BASE_URL}/videos/${getCreatedResponse.id}`)
+      .put(`/videos/${getCreatedResponse.id}`)
       .send(videoUpdateDto)
       .expect(204);
 
     log(responseResult.status, responseResult.body);
 
     const getResponse = await request(app).get(
-      `${BASE_URL}/videos/${getCreatedResponse.id}`,
+      `/videos/${getCreatedResponse.id}`,
     );
 
     expect(getResponse.body).toEqual(
@@ -144,16 +139,16 @@ describe('Videos API', () => {
 
     const id = getCreatedResponse.id;
 
-    await request(app).delete(`${BASE_URL}/videos/${id}`).expect(204);
+    await request(app).delete(`/videos/${id}`).expect(204);
 
-    const videoResponse = await request(app).get(`${BASE_URL}/videos/${id}`);
+    const videoResponse = await request(app).get(`/videos/${id}`);
 
     expect(videoResponse.status).toBe(404);
   });
 
   // * якщо Jest «висить» після тестів:
   afterAll(async () => {
-    await request(app).delete(`${BASE_URL}/testing/all-data`).expect(204);
+    await request(app).delete(`/testing/all-data`).expect(204);
   });
 });
 
