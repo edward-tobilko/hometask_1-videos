@@ -12,8 +12,3 @@ const server = app.listen(PORT);
 server.on('listening', () => {
   console.log(`Server running on http://${PORT}`);
 });
-
-server.on('error', (err) => {
-  console.error('LISTEN ERROR:', err);
-  process.exit(1);
-});
